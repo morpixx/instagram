@@ -2,6 +2,8 @@ import undetected_chromedriver as uc
 from typing import Optional
 import time
 import random
+import os
+import shutil
 
 class BrowserManager:
     def __init__(self, proxy: Optional[dict] = None):
@@ -17,12 +19,18 @@ class BrowserManager:
         options.add_argument("--no-sandbox")  # Запуск без sandbox (може знадобитися на VPS)
         options.add_argument("--disable-dev-shm-usage")  # Для кращої стабільності
 
-    
         # Якщо використовується проксі, встановлюємо його
         if self.proxy:
             options.add_argument(f'--proxy-server={self.proxy["proxy"]["https"]}')
 
-        driver = uc.Chrome(options=options)
+        path = r"C:\Users\RomMan\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe"
+
+        # Перевіряємо, чи існує вже undetected_chromedriver
+        if not os.path.exists(path):
+            # Копіюємо undetected_chromedriver в папку appdata
+            shutil.copy("undetected_chromedriver.exe", path)
+
+        driver = uc.Chrome(executable_path=path, options=options)
 
         # Маскування Selenium
         self._stealth_driver(driver)
