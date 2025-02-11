@@ -2,6 +2,8 @@ import concurrent.futures
 from database.db_manager import DatabaseManager
 from utils.proxy_handler import parse_proxy_string
 from services.registration_worker import RegistrationWorker
+from os import getenv
+from dotenv import load_dotenv
 
 class InstagramRegistrationSystem:
     def __init__(self):
@@ -26,7 +28,15 @@ class InstagramRegistrationSystem:
         if not accounts:
             print("Немає незареєстрованих акаунтів. Будь ласка, додайте акаунти.")
             return
-
+         
+         
+        load_dotenv("api.env")
+        api_key = getenv("FIRSTMAIL_API_KEY")
+        if not api_key:
+            raise ValueError("FIRSTMAIL_API_KEY не встановлено")
+          
+          
+          
         # Отримуємо коректну відповідь для використання проксі
         use_proxy = None
         while use_proxy not in ['yes', 'no']:
@@ -61,7 +71,7 @@ class InstagramRegistrationSystem:
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = []
             for account in accounts:
-                worker = RegistrationWorker(account, proxy)
+                worker = RegistrationWorker(account, proxy, api_key)
                 futures.append(executor.submit(worker.register))
             
             for future in concurrent.futures.as_completed(futures):

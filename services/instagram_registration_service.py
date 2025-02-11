@@ -78,7 +78,7 @@ class InstagramRegistrationService:
             print(f"Вибрана дата народження: {day} {month_index + 1} {year}")
 
             # Встановлюємо значення в селектах
-            birth_month.select_by_index(month_index + 1)
+            birth_month.select_by_index(month_index)
             birth_day.select_by_value(str(day))
             birth_year.select_by_value(str(year))
 
